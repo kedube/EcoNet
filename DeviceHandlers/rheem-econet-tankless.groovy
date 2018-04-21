@@ -76,5 +76,7 @@ def heatLevelDown() {
 }
 
 def updateDeviceData(data) {
-	sendEvent(name: "heatingSetpoint", value: data.setPoint, unit: "F")
+    sendEvent(name: "heatingSetpoint", value: data.setPoint, unit: "F")
+    sendEvent(name: "thermostatOperatingState", value: data.inUse ? "heating" : "idle")
+
 }

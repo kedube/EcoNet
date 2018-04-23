@@ -1,5 +1,5 @@
 /**
- *  Rheem Econet HVAC
+ *  Rheem Econet Thermostat
  *
  *  Copyright 2017 Bill McGair
  *
@@ -73,14 +73,16 @@ metadata {
 					[value: 92, color: "#bc2323"]
 				])
 			}
-      tileAttribute("device.inUse", key: "SECONDARY_CONTROL") {
+
+   		    tileAttribute("device.inUse", key: "SECONDARY_CONTROL") {
 				attributeState("on", label:'Active')
 				attributeState("off", label:'Idle')
 			}
 
-      tileAttribute("device.heatingSetpoint", key: "HEATING_SETPOINT") {
-       	attributeState("default", label:'${currentValue}', unit:"dF")
-      }
+    		tileAttribute("device.heatingSetpoint", key: "HEATING_SETPOINT") {
+     		  	attributeState("default", label:'${currentValue}', unit:"dF")
+      		}
+
 			tileAttribute("device.coolingSetpoint", key: "COOLING_SETPOINT") {
 				attributeState("default", label:'${currentValue}', unit:"dF")
 			}
@@ -94,7 +96,7 @@ metadata {
 			state("coolLevelDown", action:"coolLevelDown", label:"Cool", icon:"st.thermostat.thermostat-down")
 		}
 
-    valueTile("coolingSetpoint", "device.coolingSetpoint", inactiveLabel: false, width: 2, height: 2) {
+    	valueTile("coolingSetpoint", "device.coolingSetpoint", inactiveLabel: false, width: 2, height: 2) {
 			state("coolingSetpoint", label:'${currentValue}°', backgroundColor:"#1e9cbb"
 			)
 		}
@@ -134,7 +136,7 @@ metadata {
         }
 
 		standardTile("iconTile", "device.temperature", decoration: "flat", width: 1, height: 1, canChangeIcon: true) {
- 		state "default", label:'${currentValue}°', icon: "st.Weather.weather2", backgroundColor: "#79B821"
+ 			state "default", label:'${currentValue}°', icon: "st.Weather.weather2", backgroundColor: "#79B821"
  		}
         
         valueTile("outdoorTemperature", "device.outdoorTemperature", inactiveLabel: false, width: 1, height: 1) {

@@ -54,7 +54,7 @@ metadata {
               
 		multiAttributeTile(name:"tempSummary", type:"thermostat", width:6, height:4) {
 			tileAttribute("device.temperature", key: "PRIMARY_CONTROL") {
-				attributeState("temp", label:'${currentValue}', unit:"dF", defaultState: true, backgroundColors: [
+				attributeState("temp", label:'${currentValue}°', unit:"dF", defaultState: true, backgroundColors: [
 					// Celsius Color Range
 					[value: 15, color: "#153591"],
 					[value: 20, color: "#1e9cbb"],
@@ -73,14 +73,14 @@ metadata {
 					[value: 92, color: "#bc2323"]
 				])
 			}
-            tileAttribute("device.inUse", key: "SECONDARY_CONTROL") {
+      tileAttribute("device.inUse", key: "SECONDARY_CONTROL") {
 				attributeState("on", label:'Active')
 				attributeState("off", label:'Idle')
 			}
 
-            tileAttribute("device.heatingSetpoint", key: "HEATING_SETPOINT") {
-            	attributeState("default", label:'${currentValue}', unit:"dF")
-            }
+      tileAttribute("device.heatingSetpoint", key: "HEATING_SETPOINT") {
+       	attributeState("default", label:'${currentValue}', unit:"dF")
+      }
 			tileAttribute("device.coolingSetpoint", key: "COOLING_SETPOINT") {
 				attributeState("default", label:'${currentValue}', unit:"dF")
 			}
@@ -94,7 +94,7 @@ metadata {
 			state("coolLevelDown", action:"coolLevelDown", label:"Cool", icon:"st.thermostat.thermostat-down")
 		}
 
-        valueTile("coolingSetpoint", "device.coolingSetpoint", inactiveLabel: false, width: 2, height: 2) {
+    valueTile("coolingSetpoint", "device.coolingSetpoint", inactiveLabel: false, width: 2, height: 2) {
 			state("coolingSetpoint", label:'${currentValue}°', backgroundColor:"#1e9cbb"
 			)
 		}

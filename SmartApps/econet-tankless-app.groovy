@@ -19,8 +19,8 @@
  */
 definition(
     name: "Rheem EcoNet Tankless",
-    namespace: "jjhuff",
-    author: "Justin Huff",
+    namespace: "bmcgair",
+    author: "Bill McGair",
     description: "Connect to Rheem EcoNet",
     category: "SmartThings Labs",
     iconUrl: "http://smartthings.copyninja.net/icons/Rheem_EcoNet@1x.png",
@@ -93,7 +93,7 @@ def initialize() {
         def name  = waterHeaterList[it]
         if (dev == null) {
 	        try {
-    			addChildDevice("jjhuff", "Rheem Econet Water Heater", it, null, ["name": "Rheem Econet: " + name])
+    			addChildDevice("bmcgair", "Rheem Econet Tankless", it, null, ["name": "Rheem Econet: " + name])
     	    } catch (e)	{
 				log.debug "addChildDevice Error: $e"
           	}

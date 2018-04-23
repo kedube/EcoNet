@@ -1,7 +1,7 @@
 /**
- *  Rheem Econet Water Heater
+ *  Rheem Econet Tankless Water Heater
  *
- *  Copyright 2017 Justin Huff
+ *  Copyright 2017 Bill McGair
  *
  *  Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  *  in compliance with the License. You may obtain a copy of the License at:
@@ -17,7 +17,7 @@
  *  Based on https://github.com/copy-ninja/SmartThings_RheemEcoNet
  */
 metadata {
-	definition (name: "Rheem Econet Water Heater", namespace: "jjhuff", author: "Justin Huff") {
+	definition (name: "Rheem Econet Tankless", namespace: "bmcgair", author: "Bill McGair") {
         capability "Thermostat"
 		capability "Actuator"
 		capability "Refresh"
@@ -32,21 +32,23 @@ metadata {
 
 	simulator { }
 
-	tiles(scale: 2)  {
-    multiAttributeTile(name:"thermostat", type:"thermostat", width:6, height:4) {
-    tileAttribute("device.heatingSetpoint", key: "PRIMARY_CONTROL") {
-    attributeState("temp", label:'${currentValue}', unit:"dF", defaultState: true)
-    }
-    tileAttribute("", key: "VALUE_CONTROL") {
-        attributeState("VALUE_UP", action: "heatLevelUp")
-        attributeState("VALUE_DOWN", action: "heatLevelDown")
-    }
-    tileAttribute("device.thermostatOperatingState", key: "OPERATING_STATE") {
-        attributeState("idle", label:'${name}', backgroundColor:"#ffffff")
-        attributeState("heating", label:'${name}', backgroundColor:"#e86d13")
-    }
-    }
-	main("thermostat")
+    tiles(scale: 2)  {
+        multiAttributeTile(name:"thermostat", type:"thermostat", width:6, height:4) {
+
+            tileAttribute("device.heatingSetpoint", key: "PRIMARY_CONTROL") {
+                attributeState("temp", label:'${currentValue}°', unit:"dF", defaultState: true)
+            }
+            tileAttribute("", key: "VALUE_CONTROL") {
+                attributeState("VALUE_UP", action: "heatLevelUp")
+                attributeState("VALUE_DOWN", action: "heatLevelDown")
+            }
+
+            tileAttribute("device.thermostatOperatingState", key: "OPERATING_STATE") {
+                attributeState("idle", label:'${name}', backgroundColor:"#1e9cbb")
+                attributeState("heating", label:'${name}', backgroundColor:"#bc2323")
+            }
+        }
+	    main("thermostat")
 	}
 }
 

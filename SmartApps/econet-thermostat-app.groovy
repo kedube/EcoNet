@@ -208,7 +208,7 @@ def setHeatSetPoint(childDevice, heatsetpoint) {
 def setDeviceMode(childDevice, mode) {
 	log.info "setDeviceMode: $childDevice.deviceNetworkId $mode" 
 	if (login()) {
-    	apiPut("/equipment/$childDevice.deviceNetworkId", [
+    	apiPut("/equipment/$childDevice.deviceNetworkId/modes", [
         	body: [
                 mode: mode,
             ]
@@ -216,8 +216,8 @@ def setDeviceMode(childDevice, mode) {
     }
 }
 // available values are Auto, Low, Med.Lo, Medium, Med.Hi, High
-def setFanMode(childDevice, fanMode) {
-	log.info "setFanMode: $childDevice.deviceNetworkId $fanMode" 
+def setFanMode(childDevice, fanmode) {
+	log.info "setFanMode: $childDevice.deviceNetworkId $fanmode" 
 	if (login()) {
     	apiPut("/equipment/$childDevice.deviceNetworkId", [
         	body: [

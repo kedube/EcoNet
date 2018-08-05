@@ -126,12 +126,12 @@ metadata {
 		
 		
     standardTile("thermostatMode", "device.thermostatMode", inactiveLabel:true, decoration: "flat", width: 2, height: 2) {
-			state "default", label:'[thermostatMode]'
-			state "Auto", label:'', icon:"st.thermostat.auto", action:"changeMode", nextState: "updating"
-			state "Heating", label:'', icon:"st.thermostat.heating", action:"changeMode", nextState: "updating"
-			state "Cooling", label:'', icon:"st.thermostat.cooling", action:"changeMode", nextState: "updating"
+			state "default", 	label:'[thermostatMode]'
+			state "Auto", 		label:'', icon:"st.thermostat.auto", action:"changeMode", nextState: "updating"
+			state "Heating", 	label:'', icon:"st.thermostat.heating", action:"changeMode", nextState: "updating"
+			state "Cooling", 	label:'', icon:"st.thermostat.cooling", action:"changeMode", nextState: "updating"
 			state "Fan Only", label:'', icon:"st.thermostat.fan-on", action:"changeMode", nextState: "updating"
-			state "Off", label:'', icon:"st.thermostat.heating-cooling-off", action:"changeMode", nextState: "updating"
+			state "Off", 			label:'', icon:"st.thermostat.heating-cooling-off", action:"changeMode", nextState: "updating"
 			state("updating", label:"", icon: "https://raw.githubusercontent.com/tonesto7/nest-manager/master/Images/Devices/cmd_working.png")
     }
 
@@ -153,13 +153,13 @@ metadata {
 		}		
 
 	 	standardTile("thermostatFanMode", "device.thermostatFanMode", inactiveLabel:true, decoration: "flat", width: 1, height: 1) {
-			state "default", label:'[thermostatFanMode]'
-			state "Low", label:'Low', icon:"st.vents.vents-open", action:"changeFanMode", nextState: "updating"
-			state "Med.Lo", label:'Med.Lo', icon:"st.vents.vents-open", action:"changeFanMode", nextState: "updating"
-			state "Medium", label:'Med', icon:"st.vents.vents-open", action:"changeFanMode", nextState: "updating"
-			state "Med.Hi", label:'Med.Hi', icon:"st.vents.vent-open", action:"changeFanMode", nextState: "updating"
-			state "High", label:'Hi', icon:"st.vents.vents-open", action:"changeFanMode", nextState: "updating"
-			state "Off", label:'Off', icon:"st.vents.vent", action:"changeFanMode", nextState: "updating"
+			state "default", 	label:'[thermostatFanMode]'
+			state "Low", 			label:'Low', icon:"st.vents.vents-open", action:"changeFanMode", nextState: "updating"
+			state "Med.Lo", 	label:'Med.Lo', icon:"st.vents.vents-open", action:"changeFanMode", nextState: "updating"
+			state "Medium", 	label:'Med', icon:"st.vents.vents-open", action:"changeFanMode", nextState: "updating"
+			state "Med.Hi", 	label:'Med.Hi', icon:"st.vents.vent-open", action:"changeFanMode", nextState: "updating"
+			state "High", 		label:'Hi', icon:"st.vents.vents-open", action:"changeFanMode", nextState: "updating"
+			state "Off", 			label:'Off', icon:"st.vents.vent", action:"changeFanMode", nextState: "updating"
 			state("updating", label:"", icon: "https://raw.githubusercontent.com/tonesto7/nest-manager/master/Images/Devices/cmd_working.png")
 		}	 
 		

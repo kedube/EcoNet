@@ -39,9 +39,11 @@ metadata {
 		command "updateDeviceData", ["string"]
         command "thermostatOperatingState", ["string"]
         command "setThermostatMode"
+        command "setThermostatFanMode"
         command "setHeatingSetpoint"
         command "setCoolingSetpoint"
         command "changeMode"
+        command "changeFanMode"
         
         attribute "thermostatMode", "string"
 		attribute "alert", "string"
@@ -75,8 +77,8 @@ metadata {
 			}
 
    		    tileAttribute("device.inUse", key: "SECONDARY_CONTROL") {
-				attributeState("on", label:'Active')
-				attributeState("off", label:'Idle')
+				attributeState("Active", label:'Active')
+				attributeState("Idle", label:'Idle')
 			}
 
     		tileAttribute("device.heatingSetpoint", key: "HEATING_SETPOINT") {
@@ -125,8 +127,9 @@ metadata {
 			state("default", action:"refresh.refresh",        icon:"st.secondary.refresh")
 		}
 		
+		
         standardTile("thermostatMode", "device.thermostatMode", inactiveLabel:true, decoration: "flat", width: 2, height: 2) {
-            state "default", label:'[Mode]'
+            state "default", label:'[thermostatMode]'
             state "Auto", label:'', icon:"st.thermostat.auto", action:"changeMode", nextState: "updating"
             state "Heating", label:'', icon:"st.thermostat.heat", action:"changeMode", nextState: "updating"
             state "Cooling", label:'', icon:"st.thermostat.cool", action:"changeMode", nextState: "updating"
@@ -150,13 +153,20 @@ metadata {
 			state "false",icon: "st.alarm.water.dry"
 		}		
 
-		standardTile("fanSpeed", "device.fanSpeed", inactiveLabel: false, decoration: "flat", width: 1, height: 1) {
-      		state("default", label:'fanspeed: ${currentValue}', icon: "st.thermostat.fan-off")
-		}	
+ 		standardTile("thermostatFanMode", "device.thermostatFanMode", inactiveLabel:true, decoration: "flat", width: 1, height: 1) {
+      		state "default", label:'[thermostatFanMode]'
+            state "Low", label:'Low', action:"changeFanMode", nextState: "updating"
+            state "Med.Lo", label:'Med.Lo', action:"changeFanMode", nextState: "updating"
+            state "Medium", label:'Med', action:"changeFanMode", nextState: "updating"
+            state "Med.Hi", label:'Med.Hi', action:"changeFanMode", nextState: "updating"
+            state "High", label:'Hi', action:"changeFanMode", nextState: "updating"
+            state "Off", label:'Off', action:"changeFanMode", nextState: "updating"
+			state("updating", label:"", icon: "https://raw.githubusercontent.com/tonesto7/nest-manager/master/Images/Devices/cmd_working.png")
+		}	 
 		
         
 		main (["iconTile"])
-		details(["tempSummary", "coolLevelUp","coolingSetpoint", "heatingSetpoint", "heatLevelUp", "coolLevelDown", ,"heatLevelDown", "thermostatMode", "outdoorTemperature", "alert", "refresh", "deviceHumidity", "fanSpeed" ])
+		details(["tempSummary", "coolLevelUp","coolingSetpoint", "heatingSetpoint", "heatLevelUp", "coolLevelDown", ,"heatLevelDown", "thermostatMode", "outdoorTemperature", "alert", "refresh", "deviceHumidity", "thermostatFanMode" ])
 	}
 }
 
@@ -168,7 +178,6 @@ def refresh() {
     //poll()
 }
 
-
 void changeMode() {
 	def currentMode = device.currentState("thermostatMode")?.stringValue
 	def lastTriedMode = currentMode ?: "Off"
@@ -178,26 +187,42 @@ void changeMode() {
 	setThermostatMode(nextMode)
 }
 
+void changeFanMode() {
+	def currentFanMode = device.currentState("thermostatFanMode")?.stringValue
+	def lastTriedFanMode = currentFanMode ?: "Off"
+	def fanModeOrder = ['Low', 'Med.Lo', 'Medium', 'Med.Hi', 'High', 'Off']
+	def nextF = { fanModeOrder[fanModeOrder.indexOf(it) + 1] ?: fanModeOrder[0] }
+	def nextFanMode = nextF(lastTriedMode)
+	setThermostatFanMode(nextFanMode)
+
+}
+
 def setThermostatMode(String thermostatMode) {
 	switch(thermostatMode){
 		case "heat":
-			thermostatMode = "Heating"
+			thermostatMode = 'Heating'
 			break
 		case "cool":
-			thermostatMode = "Cooling"
+			thermostatMode = 'Cooling'
 			break
 		case "auto":
-			thermostatMode = "Auto"
+			thermostatMode = 'Auto'
 			break
 		case "fan only":
-			thermostatMode = "Fan Only"
+			thermostatMode = 'Fan Only'
 			break
 		case "off":
-			thermostatMode = "Off"
+			thermostatMode = 'Off'
 			break
 	}
    	sendEvent(name: "thermostatMode", value: thermostatMode)
 	parent.setDeviceMode(this.device, thermostatMode)
+}
+
+def setThermostatFanMode(String thermostatFanMode) {
+   	sendEvent(name: "thermostatFanMode", value: thermostatFanMode)
+	parent.setFanMode(this.device, thermostatFanMode)	
+	log.info "setThermostatFanMode: $thermostatFanMode " 
 }
 
 def setHeatingSetpoint(Number heatSetPoint) {
@@ -246,7 +271,9 @@ def updateDeviceData(data) {
 	sendEvent(name: "temperature", value: data.indoorTemperature, unit: "F")
 	sendEvent(name: "outdoorTemperature", value: data.outdoorTemperature, unit: "F")
 	sendEvent(name: "thermostatMode", value: data.mode)
-	sendEvent(name: "inUse", value: data.inUse ? "on" : "off")
+	sendEvent(name: "thermostatFanMode", value: data.fanMode)
+	sendEvent(name: "fanSpeed", value: data.fanSpeed)
+	sendEvent(name: "inUse", value: data.inUse ? "Active" : "Idle")
 	sendEvent(name: "alert", value: data.hasCriticalAlert ? "true" : "false")
 
 }

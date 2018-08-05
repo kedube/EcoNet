@@ -138,7 +138,7 @@ metadata {
 			state("updating", label:"", icon: "https://raw.githubusercontent.com/tonesto7/nest-manager/master/Images/Devices/cmd_working.png")
         }
 
-		standardTile("iconTile", "device.temperature", decoration: "flat", width: 1, height: 1, canChangeIcon: true) {
+	standardTile("iconTile", "device.temperature", decoration: "flat", width: 1, height: 1, canChangeIcon: true) {
  			state "default", label:'${currentValue}°', icon: "st.Weather.weather2", backgroundColor: "#79B821"
  		}
         
@@ -153,8 +153,8 @@ metadata {
 			state "false",icon: "st.alarm.water.dry"
 		}		
 
- 		standardTile("thermostatFanMode", "device.thermostatFanMode", inactiveLabel:true, decoration: "flat", width: 1, height: 1) {
-      		state "default", label:'[thermostatFanMode]'
+ 	standardTile("thermostatFanMode", "device.thermostatFanMode", inactiveLabel:true, decoration: "flat", width: 1, height: 1) {
+      	    state "default", label:'[thermostatFanMode]'
             state "Low", label:'Low', action:"changeFanMode", nextState: "updating"
             state "Med.Lo", label:'Med.Lo', action:"changeFanMode", nextState: "updating"
             state "Medium", label:'Med', action:"changeFanMode", nextState: "updating"

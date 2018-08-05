@@ -192,7 +192,7 @@ void changeFanMode() {
 	def lastTriedFanMode = currentFanMode ?: "Off"
 	def fanModeOrder = ['Low', 'Med.Lo', 'Medium', 'Med.Hi', 'High', 'Off']
 	def nextF = { fanModeOrder[fanModeOrder.indexOf(it) + 1] ?: fanModeOrder[0] }
-	def nextFanMode = nextF(lastTriedMode)
+	def nextFanMode = nextF(lastTriedFanMode)
 	setThermostatFanMode(nextFanMode)
 
 }

@@ -219,7 +219,7 @@ def setDeviceMode(childDevice, mode) {
 def setFanMode(childDevice, fanmode) {
 	log.info "setFanMode: $childDevice.deviceNetworkId $fanmode" 
 	if (login()) {
-    	apiPut("/equipment/$childDevice.deviceNetworkId", [
+    	apiPut("/equipment/$childDevice.deviceNetworkId/fanModes", [
         	body: [
                 fanMode: fanmode,
             ]

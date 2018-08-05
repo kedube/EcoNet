@@ -20,12 +20,12 @@ metadata {
 	definition (name: "Rheem Econet Thermostat", namespace: "bmcgair", author: "Bill McGair") {
 		capability "Actuator"
 		capability "Thermostat"
-        capability "Sensor"
-        capability "Polling"
+		capability "Sensor"
+		capability "Polling"
 		capability "Refresh"
 		capability "Relative Humidity Measurement"
 		capability "Temperature Measurement"
-        capability "Thermostat Cooling Setpoint"
+		capability "Thermostat Cooling Setpoint"
 		capability "Thermostat Fan Mode"
 		capability "Thermostat Heating Setpoint"
 		capability "Thermostat Mode"
@@ -37,15 +37,15 @@ metadata {
 		command "coolLevelUp"
 		command "coolLevelDown"
 		command "updateDeviceData", ["string"]
-        command "thermostatOperatingState", ["string"]
-        command "setThermostatMode"
-        command "setThermostatFanMode"
-        command "setHeatingSetpoint"
-        command "setCoolingSetpoint"
-        command "changeMode"
-        command "changeFanMode"
+		command "thermostatOperatingState", ["string"]
+		command "setThermostatMode"
+		command "setThermostatFanMode"
+		command "setHeatingSetpoint"
+		command "setCoolingSetpoint"
+		command "changeMode"
+		command "changeFanMode"
         
-        attribute "thermostatMode", "string"
+		attribute "thermostatMode", "string"
 		attribute "alert", "string"
 
 	}
@@ -76,14 +76,14 @@ metadata {
 				])
 			}
 
-   		    tileAttribute("device.inUse", key: "SECONDARY_CONTROL") {
+			tileAttribute("device.inUse", key: "SECONDARY_CONTROL") {
 				attributeState("Active", label:'Active')
 				attributeState("Idle", label:'Idle')
 			}
 
-    		tileAttribute("device.heatingSetpoint", key: "HEATING_SETPOINT") {
-     		  	attributeState("default", label:'${currentValue}', unit:"dF")
-      		}
+			tileAttribute("device.heatingSetpoint", key: "HEATING_SETPOINT") {
+				attributeState("default", label:'${currentValue}', unit:"dF")
+			}
 
 			tileAttribute("device.coolingSetpoint", key: "COOLING_SETPOINT") {
 				attributeState("default", label:'${currentValue}', unit:"dF")
@@ -98,29 +98,26 @@ metadata {
 			state("coolLevelDown", action:"coolLevelDown", label:"Cool", icon:"st.thermostat.thermostat-down")
 		}
 
-    	valueTile("coolingSetpoint", "device.coolingSetpoint", inactiveLabel: false, width: 2, height: 2) {
-			state("coolingSetpoint", label:'${currentValue}°', backgroundColor:"#1e9cbb"
-			)
+  	valueTile("coolingSetpoint", "device.coolingSetpoint", inactiveLabel: false, width: 2, height: 2) {
+			state("coolingSetpoint", label:'${currentValue}°', backgroundColor:"#1e9cbb")
 		}
         
 		valueTile("heatingSetpoint", "device.heatingSetpoint", inactiveLabel: false, width: 2, height: 2) {
-			state("heatingSetpoint", label:'${currentValue}°', backgroundColor:"#d04e00"
-			)
+			state("heatingSetpoint", label:'${currentValue}°', backgroundColor:"#d04e00")
 		}
         
 		standardTile("heatLevelUp", "device.switch", canChangeIcon: false, decoration: "flat" ) {
 			state("heatLevelUp",   action:"heatLevelUp",  label:"Heat", icon:"st.thermostat.thermostat-up")
 		}  
+
 		standardTile("heatLevelDown", "device.switch", canChangeIcon: false, decoration: "flat") {
 			state("heatLevelDown", action:"heatLevelDown", label:"Heat",icon:"st.thermostat.thermostat-down")
 		}
 		
 
 		standardTile("switch", "device.switch", canChangeIcon: false, decoration: "flat" ) {
-       		state "on", label: 'On', action: "switch.off",
-          		icon: "st.switches.switch.on", backgroundColor: "#79b821"
-       		state("off", label: 'Off', action: "switch.on",
-          		icon: "st.switches.switch.off", backgroundColor: "#ffffff")
+			state "on", label: 'On', action: "switch.off", icon: "st.switches.switch.on", backgroundColor: "#79b821"
+			state("off", label: 'Off', action: "switch.on", icon: "st.switches.switch.off", backgroundColor: "#ffffff")
 		}
         
 		standardTile("refresh", "device.switch", decoration: "flat", width: 2, height: 2) {
@@ -128,44 +125,46 @@ metadata {
 		}
 		
 		
-        standardTile("thermostatMode", "device.thermostatMode", inactiveLabel:true, decoration: "flat", width: 2, height: 2) {
-            state "default", label:'[thermostatMode]'
-            state "Auto", label:'', icon:"st.thermostat.auto", action:"changeMode", nextState: "updating"
-            state "Heating", label:'', icon:"st.thermostat.heat", action:"changeMode", nextState: "updating"
-            state "Cooling", label:'', icon:"st.thermostat.cool", action:"changeMode", nextState: "updating"
-            state "Fan Only", label:'', icon:"st.thermostat.fan-on", action:"changeMode", nextState: "updating"
-            state "Off", label:'', icon:"st.thermostat.heating-cooling-off", action:"changeMode", nextState: "updating"
+    standardTile("thermostatMode", "device.thermostatMode", inactiveLabel:true, decoration: "flat", width: 2, height: 2) {
+			state "default", label:'[thermostatMode]'
+			state "Auto", label:'', icon:"st.thermostat.auto", action:"changeMode", nextState: "updating"
+			state "Heating", label:'', icon:"st.thermostat.heating", action:"changeMode", nextState: "updating"
+			state "Cooling", label:'', icon:"st.thermostat.cooling", action:"changeMode", nextState: "updating"
+			state "Fan Only", label:'', icon:"st.thermostat.fan-on", action:"changeMode", nextState: "updating"
+			state "Off", label:'', icon:"st.thermostat.heating-cooling-off", action:"changeMode", nextState: "updating"
 			state("updating", label:"", icon: "https://raw.githubusercontent.com/tonesto7/nest-manager/master/Images/Devices/cmd_working.png")
-        }
+    }
 
-	standardTile("iconTile", "device.temperature", decoration: "flat", width: 1, height: 1, canChangeIcon: true) {
+		standardTile("iconTile", "device.temperature", decoration: "flat", width: 1, height: 1, canChangeIcon: true) {
  			state "default", label:'${currentValue}°', icon: "st.Weather.weather2", backgroundColor: "#79B821"
  		}
         
-        valueTile("outdoorTemperature", "device.outdoorTemperature", inactiveLabel: false, width: 1, height: 1) {
+    valueTile("outdoorTemperature", "device.outdoorTemperature", inactiveLabel: false, width: 1, height: 1) {
 			state("outdoorTemperature", label:'${currentValue}°')
 		}
+
 		valueTile("deviceHumidity", "device.humidity", inactiveLabel: false, width: 1, height: 1) {
 			state("deviceHumidity", label:'${currentValue}%', unit:"%")
 		}
+
 		standardTile("alert", "device.alert",  decoration: "flat", inactiveLabel: false) {
 			state "true", icon: "st.alarm.water.wet"
 			state "false",icon: "st.alarm.water.dry"
 		}		
 
- 	standardTile("thermostatFanMode", "device.thermostatFanMode", inactiveLabel:true, decoration: "flat", width: 1, height: 1) {
-      	    state "default", label:'[thermostatFanMode]'
-            state "Low", label:'Low', icon:"st.thermostat.fan-auto", action:"changeFanMode", nextState: "updating"
-            state "Med.Lo", label:'Med.Lo', icon:"st.thermostat.fan-on", action:"changeFanMode", nextState: "updating"
-            state "Medium", label:'Med', icon:"st.thermostat.fan-on", action:"changeFanMode", nextState: "updating"
-            state "Med.Hi", label:'Med.Hi', icon:"st.thermostat.fan-on", action:"changeFanMode", nextState: "updating"
-            state "High", label:'Hi', icon:"st.thermostat.fan-on", action:"changeFanMode", nextState: "updating"
-            state "Off", label:'Off', icon:"st.thermostat.fan-on", action:"changeFanMode", nextState: "updating"
-	    state("updating", label:"", icon: "https://raw.githubusercontent.com/tonesto7/nest-manager/master/Images/Devices/cmd_working.png")
-	 }	 
+	 	standardTile("thermostatFanMode", "device.thermostatFanMode", inactiveLabel:true, decoration: "flat", width: 1, height: 1) {
+			state "default", label:'[thermostatFanMode]'
+			state "Low", label:'Low', icon:"st.vents.vents-open", action:"changeFanMode", nextState: "updating"
+			state "Med.Lo", label:'Med.Lo', icon:"st.vents.vents-open", action:"changeFanMode", nextState: "updating"
+			state "Medium", label:'Med', icon:"st.vents.vents-open", action:"changeFanMode", nextState: "updating"
+			state "Med.Hi", label:'Med.Hi', icon:"st.vents.vent-open", action:"changeFanMode", nextState: "updating"
+			state "High", label:'Hi', icon:"st.vents.vents-open", action:"changeFanMode", nextState: "updating"
+			state "Off", label:'Off', icon:"st.vents.vent", action:"changeFanMode", nextState: "updating"
+			state("updating", label:"", icon: "https://raw.githubusercontent.com/tonesto7/nest-manager/master/Images/Devices/cmd_working.png")
+		}	 
 		
         
-		main (["iconTile"])
+	main (["iconTile"])
 		details(["tempSummary", "coolLevelUp","coolingSetpoint", "heatingSetpoint", "heatLevelUp", "coolLevelDown", ,"heatLevelDown", "thermostatMode", "outdoorTemperature", "alert", "refresh", "deviceHumidity", "thermostatFanMode" ])
 	}
 }
@@ -215,48 +214,48 @@ def setThermostatMode(String thermostatMode) {
 			thermostatMode = 'Off'
 			break
 	}
-   	sendEvent(name: "thermostatMode", value: thermostatMode)
+	sendEvent(name: "thermostatMode", value: thermostatMode)
 	parent.setDeviceMode(this.device, thermostatMode)
 }
 
 def setThermostatFanMode(String thermostatFanMode) {
-   	sendEvent(name: "thermostatFanMode", value: thermostatFanMode)
+	sendEvent(name: "thermostatFanMode", value: thermostatFanMode)
 	parent.setFanMode(this.device, thermostatFanMode)	
 	log.info "setThermostatFanMode: $thermostatFanMode " 
 }
 
 def setHeatingSetpoint(Number heatSetPoint) {
-   	sendEvent(name: "heatingSetpoint", value: heatSetPoint, unit: "F")
+	sendEvent(name: "heatingSetpoint", value: heatSetPoint, unit: "F")
 	parent.setHeatSetPoint(this.device, heatSetPoint)
 }
 
 def setCoolingSetpoint(Number coolSetPoint) {
-   	sendEvent(name: "coolingSetpoint", value: coolSetPoint, unit: "F")
+	sendEvent(name: "coolingSetpoint", value: coolSetPoint, unit: "F")
 	parent.setCoolSetPoint(this.device, coolSetPoint)
 }
 
 def heatLevelUp() { 
 	def heatSetPoint = device.currentValue("heatingSetpoint")
-    heatSetPoint = heatSetPoint + 1
+	heatSetPoint = heatSetPoint + 1
 	setHeatingSetpoint(heatSetPoint)
 }	
 
 def heatLevelDown() { 
 	def heatSetPoint = device.currentValue("heatingSetpoint")
-    heatSetPoint = heatSetPoint - 1
-    setHeatingSetpoint(heatSetPoint)
+	heatSetPoint = heatSetPoint - 1
+	setHeatingSetpoint(heatSetPoint)
 }
 
 def coolLevelUp() { 
 	def coolSetPoint = device.currentValue("coolingSetpoint")
-    coolSetPoint = coolSetPoint + 1
+	coolSetPoint = coolSetPoint + 1
 	setCoolingSetpoint(coolSetPoint)
 }	
 
 def coolLevelDown() { 
 	def coolSetPoint = device.currentValue("coolingSetpoint")
-    coolSetPoint = coolSetPoint - 1
-    setCoolingSetpoint(coolSetPoint)
+	coolSetPoint = coolSetPoint - 1
+	setCoolingSetpoint(coolSetPoint)
 }
 
 def updateDeviceData(data) {
@@ -266,7 +265,7 @@ def updateDeviceData(data) {
 	sendEvent(name: "coolingSetpoint", value: data.coolSetPoint, unit: "F")
 	sendEvent(name: "minCoolSetPoint", value: data.minCoolSetPoint, unit: "F")
 	sendEvent(name: "maxCoolSetPoint", value: data.maxCoolSetPoint, unit: "F")
-    sendEvent(name: "switch", value: data.isEnabled ? "on" : "off")
+	sendEvent(name: "switch", value: data.isEnabled ? "on" : "off")
 	sendEvent(name: "humidity", value: (String.format("%3.0f",data.indoorHumidityPercentage)), unit: "%")
 	sendEvent(name: "temperature", value: data.indoorTemperature, unit: "F")
 	sendEvent(name: "outdoorTemperature", value: data.outdoorTemperature, unit: "F")

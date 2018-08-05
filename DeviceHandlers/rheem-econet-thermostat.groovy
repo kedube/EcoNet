@@ -155,14 +155,14 @@ metadata {
 
  	standardTile("thermostatFanMode", "device.thermostatFanMode", inactiveLabel:true, decoration: "flat", width: 1, height: 1) {
       	    state "default", label:'[thermostatFanMode]'
-            state "Low", label:'Low', action:"changeFanMode", nextState: "updating"
-            state "Med.Lo", label:'Med.Lo', action:"changeFanMode", nextState: "updating"
-            state "Medium", label:'Med', action:"changeFanMode", nextState: "updating"
-            state "Med.Hi", label:'Med.Hi', action:"changeFanMode", nextState: "updating"
-            state "High", label:'Hi', action:"changeFanMode", nextState: "updating"
-            state "Off", label:'Off', action:"changeFanMode", nextState: "updating"
-			state("updating", label:"", icon: "https://raw.githubusercontent.com/tonesto7/nest-manager/master/Images/Devices/cmd_working.png")
-		}	 
+            state "Low", label:'Low', icon:"st.thermostat.fan-auto", action:"changeFanMode", nextState: "updating"
+            state "Med.Lo", label:'Med.Lo', icon:"st.thermostat.fan-on", action:"changeFanMode", nextState: "updating"
+            state "Medium", label:'Med', icon:"st.thermostat.fan-on", action:"changeFanMode", nextState: "updating"
+            state "Med.Hi", label:'Med.Hi', icon:"st.thermostat.fan-on", action:"changeFanMode", nextState: "updating"
+            state "High", label:'Hi', icon:"st.thermostat.fan-on", action:"changeFanMode", nextState: "updating"
+            state "Off", label:'Off', icon:"st.thermostat.fan-on", action:"changeFanMode", nextState: "updating"
+	    state("updating", label:"", icon: "https://raw.githubusercontent.com/tonesto7/nest-manager/master/Images/Devices/cmd_working.png")
+	 }	 
 		
         
 		main (["iconTile"])

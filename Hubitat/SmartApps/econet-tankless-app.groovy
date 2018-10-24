@@ -1,7 +1,7 @@
 /**
  *  Rheem EcoNet (Connect)
  *
- *  Copyright 2018 Bill McGair
+ *  Copyright 2017 Justin Huff
  *
  *  Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  *  in compliance with the License. You may obtain a copy of the License at:
@@ -12,16 +12,16 @@
  *  on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License
  *  for the specific language governing permissions and limitations under the License.
  *
- *  Last Updated : 4/20/18
+ *  Last Updated : 1/1/17
  *
  *  Based on https://github.com/copy-ninja/SmartThings_RheemEcoNet
  *
  */
 definition(
-    name: "Rheem EcoNet Thermostat",
-    namespace: "bmcgair",
-    author: "Bill McGair",
-    description: "Connect to Rheem EcoNet Thermostat",
+    name: "Rheem Econet Tankless",
+    namespace: "billm",
+    author: "Bill M",
+    description: "Connect to Rheem EcoNet",
     category: "SmartThings Labs",
     iconUrl: "http://smartthings.copyninja.net/icons/Rheem_EcoNet@1x.png",
     iconX2Url: "http://smartthings.copyninja.net/icons/Rheem_EcoNet@2x.png",
@@ -42,18 +42,18 @@ def prefLogIn() {
 			input("password", "password", title: "Password", description: "Rheem EcoNet password (case sensitive)")
 		} 
 		section("Advanced Options"){
-			input(name: "polling", title: "Server Polling (in Minutes)", type: "int", description: "in minutes", defaultValue: "5" )
+			input(name: "polling", title: "Server Polling (in Minutes)", type: "int", description: "in minutes", defaultValue: "10" )
 		}
 	}
 }
 
 def prefListDevice() {	
 	if (login()) {
-		def hvaclist = gethvaclist()
-		if (hvaclist) {
+		def waterHeaterList = getWaterHeaterList()
+		if (waterHeaterList) {
 			return dynamicPage(name: "prefListDevice",  title: "Devices", install:true, uninstall:true) {
-				section("Select which thermostat to use"){
-					input(name: "hvac", type: "enum", required:false, multiple:true, metadata:[values:hvaclist])
+				section("Select which water heater to use"){
+					input(name: "waterheater", type: "enum", required:false, multiple:true, options:[waterHeaterList])
 				}
 			}
 		} else {
@@ -86,14 +86,14 @@ def initialize() {
 	state.polling = [ last: 0, rescheduler: now() ]  
 	    
 	// Create selected devices
-	def hvaclist = gethvaclist()
-    def selectedDevices = [] + getSelectedDevices("hvac")
+	def waterHeaterList = getWaterHeaterList()
+    def selectedDevices = [] + getSelectedDevices("waterheater")
     selectedDevices.each {
     	def dev = getChildDevice(it)
-        def name  = hvaclist[it]
+        def name  = waterHeaterList[it]
         if (dev == null) {
 	        try {
-    			addChildDevice("bmcgair", "Rheem Econet Thermostat", it, null, ["name": "Rheem Econet: " + name])
+    			addChildDevice("bmcgair", "Rheem Econet Tankless", it, null, ["name": "Rheem Tankless: " + name])
     	    } catch (e)	{
 				log.debug "addChildDevice Error: $e"
           	}
@@ -123,13 +123,13 @@ def getSelectedDevices( settingsName ) {
 
 
 /* Data Management */
-// Listing all the HVAC Units you have in Rheem EcoNet
-private gethvaclist() { 	 
+// Listing all the water heaters you have in Rheem EcoNet
+private getWaterHeaterList() { 	 
 	def deviceList = [:]
 	apiGet("/locations", [] ) { response ->
     	if (response.status == 200) {
           	response.data.equipment[0].each { 
-            	if (it.type.equals("HVAC")) {
+            	if (it.type.equals("Water Heater")) {
                 	deviceList["" + it.id]= it.name
                 }
             }
@@ -184,44 +184,43 @@ def runRefresh(evt) {
 	if (!evt) state.polling?.rescheduler = now()
 }
 
-def setCoolSetPoint(childDevice, coolsetpoint) { 
-	log.info "setDeviceSetPoint: $childDevice.deviceNetworkId $coolsetpoint" 
+def setDeviceSetPoint(childDevice, setpoint) { 
+	log.info "setDeviceSetPoint: $childDevice.deviceNetworkId $setpoint" 
 	if (login()) {
     	apiPut("/equipment/$childDevice.deviceNetworkId", [
         	body: [
-                coolSetPoint: coolsetpoint,
+                setPoint: setpoint,
+            ]
+        ])
+    }
+
+}
+def setDeviceEnabled(childDevice, enabled) {
+	log.info "setDeviceEnabled: $childDevice.deviceNetworkId $enabled" 
+	if (login()) {
+    	apiPut("/equipment/$childDevice.deviceNetworkId", [
+        	body: [
+                isEnabled: enabled,
             ]
         ])
     }
 }
-def setHeatSetPoint(childDevice, heatsetpoint) { 
-	log.info "setDeviceSetPoint: $childDevice.deviceNetworkId $heatsetpoint" 
-	if (login()) {
-    	apiPut("/equipment/$childDevice.deviceNetworkId", [
-        	body: [
-                heatSetPoint: heatsetpoint,
-            ]
-        ])
-    }
-}
-// available values are Heating, Cooling, Auto, Fan Only, Off, Emergency Heat
 def setDeviceMode(childDevice, mode) {
-	log.info "setDeviceMode: $childDevice.deviceNetworkId $mode" 
+	log.info "setDeviceEnabled: $childDevice.deviceNetworkId $enabled" 
 	if (login()) {
-    	apiPut("/equipment/$childDevice.deviceNetworkId/modes", [
+    	apiPut("/equipment/$childDevice.deviceNetworkId", [
         	body: [
                 mode: mode,
             ]
         ])
     }
 }
-// available values are Auto, Low, Med.Lo, Medium, Med.Hi, High
-def setFanMode(childDevice, fanmode) {
-	log.info "setFanMode: $childDevice.deviceNetworkId $fanmode" 
+def setDeviceOnVacation(childDevice, OnVacation) {
+	log.info "setDeviceOnVacation: $childDevice.deviceNetworkId $OnVacation" 
 	if (login()) {
-    	apiPut("/equipment/$childDevice.deviceNetworkId/fanModes", [
+    	apiPut("/equipment/$childDevice.deviceNetworkId", [
         	body: [
-                fanMode: fanmode,
+                isOnVacation: OnVacation,
             ]
         ])
     }
@@ -293,7 +292,7 @@ private apiPut(apiPath, apiParams = [], callback = {}) {
         headers: ["Authorization": getApiAuth()],
         requestContentType: "application/json",
 	] + apiParams
-	
+	log.debug "apiPut: $apiParams"
 	try {
 		httpPut(apiParams) { response -> 
         	callback(response)
@@ -310,4 +309,3 @@ private getApiURL() {
 private getApiAuth() {
 	return "Bearer " + state.session?.accessToken
 }
-

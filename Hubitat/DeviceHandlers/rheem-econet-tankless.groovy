@@ -27,6 +27,7 @@ metadata {
 		
 		command "heatLevelUp"
 		command "heatLevelDown"
+    command "refresh"
 		command "updateDeviceData", ["string"]
 	}
 
@@ -48,6 +49,7 @@ metadata {
                 attributeState("heating", label:'${name}', backgroundColor:"#bc2323")
             }
         }
+
 	    main("thermostat")
 	}
 }

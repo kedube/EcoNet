@@ -41,9 +41,6 @@ def prefLogIn() {
 			input("username", "email", title: "Username", description: "Rheem EcoNet Email")
 			input("password", "password", title: "Password", description: "Rheem EcoNet password (case sensitive)")
 		} 
-		section("Advanced Options"){
-			input(name: "polling", title: "Server Polling (in Minutes)", type: "int", description: "in minutes", defaultValue: "5" )
-		}
 	}
 }
 
@@ -74,6 +71,8 @@ def installed() { initialize() }
 def updated() { 
 	unsubscribe()
 	initialize() 
+	runEvery10Minutes("refresh")
+
 }
 def uninstalled() {
 	unschedule()
@@ -82,9 +81,7 @@ def uninstalled() {
 }	
 
 def initialize() {
-	// Set initial states
-	state.polling = [ last: 0, rescheduler: now() ]  
-	    
+
 	// Create selected devices
 	def hvaclist = gethvaclist()
     def selectedDevices = [] + getSelectedDevices("hvac")
@@ -99,20 +96,6 @@ def initialize() {
           	}
         }
     }
-    
-	// Remove unselected devices
-	/*def deleteDevices = (selectedDevices) ? (getChildDevices().findAll { !selectedDevices.contains(it.deviceNetworkId) }) : getAllChildDevices()
-	deleteDevices.each { deleteChildDevice(it.deviceNetworkId) } */
-	
-	//Subscribes to sunrise and sunset event to trigger refreshes
-	subscribe(location, "sunrise", runRefresh)
-	subscribe(location, "sunset", runRefresh)
-	subscribe(location, "mode", runRefresh)
-	subscribe(location, "sunriseTime", runRefresh)
-	subscribe(location, "sunsetTime", runRefresh)
-	    
-	//Refresh devices
-	runRefresh()
 }
 
 def getSelectedDevices( settingsName ) {
@@ -145,9 +128,7 @@ def refresh() {
     }
     
 	log.info "Refreshing data..."
-    // update last refresh
-	state.polling?.last = now()
-
+    
 	// get all the children and send updates
 	getAllChildDevices().each {
     	def id = it.deviceNetworkId
@@ -159,29 +140,6 @@ def refresh() {
         }
 
     }
-    
-	//schedule the rescheduler to schedule refresh ;)
-	if ((state.polling?.rescheduler?:0) + 2400000 < now()) {
-		log.info "Scheduling Auto Rescheduler.."
-		runEvery30Minutes(runRefresh)
-		state.polling?.rescheduler = now()
-	}
-}
-
-// Schedule refresh
-def runRefresh(evt) {
-	log.info "Last refresh was "  + ((now() - state.polling?.last?:0)/60000) + " minutes ago"
-	// Reschedule if  didn't update for more than 5 minutes plus specified polling
-	if ((((state.polling?.last?:0) + (((settings.polling?.toInteger()?:1>0)?:1) * 60000) + 300000) < now()) && canSchedule()) {
-		log.info "Scheduling Auto Refresh.."
-		schedule("* */" + ((settings.polling?.toInteger()?:1>0)?:1) + " * * * ?", refresh)
-	}
-    
-	// Force Refresh NOWWW!!!!
-	refresh()
-    
-	//Update rescheduler's last run
-	if (!evt) state.polling?.rescheduler = now()
 }
 
 def setCoolSetPoint(childDevice, coolsetpoint) { 
@@ -310,4 +268,3 @@ private getApiURL() {
 private getApiAuth() {
 	return "Bearer " + state.session?.accessToken
 }
-

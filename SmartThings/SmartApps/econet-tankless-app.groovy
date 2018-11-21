@@ -1,7 +1,8 @@
 /**
  *  Rheem EcoNet (Connect)
  *
- *  Copyright 2017 Justin Huff
+ *  Contributors:
+ *      Largely based on work by Justin Huff. Moved to my namespace to avoid confusion after some modification.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  *  in compliance with the License. You may obtain a copy of the License at:
@@ -20,7 +21,7 @@
 definition(
     name: "Rheem EcoNet Tankless",
     namespace: "bmcgair",
-    author: "Bill McGair",
+    author: "BMcGair",
     description: "Connect to Rheem EcoNet",
     category: "SmartThings Labs",
     iconUrl: "http://smartthings.copyninja.net/icons/Rheem_EcoNet@1x.png",

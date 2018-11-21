@@ -46,6 +46,7 @@ def prefLogIn() {
 }
 
 def prefListDevice() {	
+  login()
 	if (login()) {
 		def hvaclist = gethvaclist()
 		if (hvaclist) {
@@ -78,7 +79,7 @@ def updated() {
 def uninstalled() {
 	unschedule()
     unsubscribe()
-	getAllChildDevices().each { deleteChildDevice(it) }
+	getChildDevices().each { deleteChildDevice(it) }
 }	
 
 def initialize() {
@@ -124,14 +125,13 @@ private gethvaclist() {
 
 // Refresh data
 def refresh() {
-	if (!login()) {
-    	return
+  if (!login()) {
+      return
     }
-    
 	log.info "Refreshing data..."
     
 	// get all the children and send updates
-	getAllChildDevices().each {
+	getChildDevices().each {
     	def id = it.deviceNetworkId
     	apiGet("/equipment/$id", [] ) { response ->
     		if (response.status == 200) {
@@ -140,7 +140,7 @@ def refresh() {
             }
         }
 
-    }
+  }  }
 }
 
 def setCoolSetPoint(childDevice, coolsetpoint) { 

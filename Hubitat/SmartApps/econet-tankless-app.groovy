@@ -73,7 +73,7 @@ def installed() { initialize() }
 def updated() { 
 	unsubscribe()
 	initialize() 
-  runEvery30Minutes("refresh")
+  runEvery30Minutes(refresh)
 }
 def uninstalled() {
 	unschedule()

@@ -16,4 +16,4 @@ Copy/paste the Smart App into your Smart Things IDE, then add a copy of the Smar
 
 TODO:
 
-All the tiles work excep fan mode. Fix that is the first order of business. After that, modify the connect app so that it discovers thermostats, water heaters, and tankless water heaters. Right now you have to install a version of the app for both water heaters, and thermostats.
+Modify the connect app so that it discovers thermostats, water heaters, and tankless water heaters. Right now you have to install a version of the app for both water heaters, and thermostats.

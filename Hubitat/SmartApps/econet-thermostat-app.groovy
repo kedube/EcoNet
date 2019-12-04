@@ -70,7 +70,8 @@ def prefListDevice() {
 
 /* Initialization */
 def installed() { initialize() }
-def updated() { 
+def updated() {
+	unschedule()
 	unsubscribe()
 	initialize() 
 	runEvery10Minutes(refresh)
@@ -125,6 +126,7 @@ private gethvaclist() {
 
 // Refresh data
 def refresh() {
+  login()
   if (!login()) {
       return
     }
@@ -141,30 +143,33 @@ def refresh() {
         }
 
   }  }
-}
 
-def setCoolSetPoint(childDevice, coolsetpoint) { 
+
+def setCoolSetPoint(childDevice, coolsetpoint) {
+    login()
 	log.info "setDeviceSetPoint: $childDevice.deviceNetworkId $coolsetpoint" 
 	if (login()) {
     	apiPut("/equipment/$childDevice.deviceNetworkId", [
         	body: [
-                coolSetPoint: coolsetpoint,
+                coolSetPoint: Float.parseFloat(coolsetpoint),
             ]
         ])
     }
 }
-def setHeatSetPoint(childDevice, heatsetpoint) { 
+def setHeatSetPoint(childDevice, heatsetpoint) {
+    login()
 	log.info "setDeviceSetPoint: $childDevice.deviceNetworkId $heatsetpoint" 
 	if (login()) {
     	apiPut("/equipment/$childDevice.deviceNetworkId", [
         	body: [
-                heatSetPoint: heatsetpoint,
+                heatSetPoint: Float.parseFloat(heatsetpoint),
             ]
         ])
     }
 }
 // available values are Heating, Cooling, Auto, Fan Only, Off, Emergency Heat
 def setDeviceMode(childDevice, mode) {
+    login()
 	log.info "setDeviceMode: $childDevice.deviceNetworkId $mode" 
 	if (login()) {
     	apiPut("/equipment/$childDevice.deviceNetworkId/modes", [
@@ -176,6 +181,7 @@ def setDeviceMode(childDevice, mode) {
 }
 // available values are Auto, Low, Med.Lo, Medium, Med.Hi, High
 def setFanMode(childDevice, fanmode) {
+    login()
 	log.info "setFanMode: $childDevice.deviceNetworkId $fanmode" 
 	if (login()) {
     	apiPut("/equipment/$childDevice.deviceNetworkId/fanModes", [

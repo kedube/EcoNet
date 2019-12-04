@@ -31,93 +31,92 @@ definition(
 
 
 preferences {
-	page(name: "prefLogIn", title: "Rheem EcoNet")    
-	page(name: "prefListDevice", title: "Rheem EcoNet")
+  page(name: "prefLogIn", title: "Rheem EcoNet")    
+  page(name: "prefListDevice", title: "Rheem EcoNet")
 }
 
 /* Preferences */
 def prefLogIn() {
-	def showUninstall = username != null && password != null 
-	return dynamicPage(name: "prefLogIn", title: "Connect to Rheem EcoNet", nextPage:"prefListDevice", uninstall:showUninstall, install: false) {
-		section("Login Credentials"){
-			input("username", "email", title: "Username", description: "Rheem EcoNet Email")
-			input("password", "password", title: "Password", description: "Rheem EcoNet password (case sensitive)")
-		} 
-	}
+  def showUninstall = username != null && password != null 
+  return dynamicPage(name: "prefLogIn", title: "Connect to Rheem EcoNet", nextPage:"prefListDevice", uninstall:showUninstall, install: false) {
+    section("Login Credentials"){
+      input("username", "email", title: "Username", description: "Rheem EcoNet Email")
+      input("password", "password", title: "Password", description: "Rheem EcoNet password (case sensitive)")
+    } 
+  }
 }
 
-def prefListDevice() {	
+def prefListDevice() {  
   login()
-	if (login()) {
-		def waterHeaterList = getWaterHeaterList()
-		if (waterHeaterList) {
-			return dynamicPage(name: "prefListDevice",  title: "Devices", install:true, uninstall:true) {
-				section("Select which water heater to use"){
-					input(name: "waterheater", type: "enum", required:false, multiple:true, options:[waterHeaterList])
-				}
-			}
-		} else {
-			return dynamicPage(name: "prefListDevice",  title: "Error!", install:false, uninstall:true) {
-				section(""){ paragraph "Could not find any devices"  }
-			}
-		}
-	} else {
-		return dynamicPage(name: "prefListDevice",  title: "Error!", install:false, uninstall:true) {
-			section(""){ paragraph "The username or password you entered is incorrect. Try again. " }
-		}  
-	}
+  if (login()) {
+    def waterHeaterList = getWaterHeaterList()
+    if (waterHeaterList) {
+      return dynamicPage(name: "prefListDevice",  title: "Devices", install:true, uninstall:true) {
+        section("Select which water heater to use"){
+          input(name: "waterheater", type: "enum", required:false, multiple:true, options:[waterHeaterList])
+        }
+      }
+    } else {
+      return dynamicPage(name: "prefListDevice",  title: "Error!", install:false, uninstall:true) {
+        section(""){ paragraph "Could not find any devices"  }
+      }
+    }
+  } else {
+    return dynamicPage(name: "prefListDevice",  title: "Error!", install:false, uninstall:true) {
+      section(""){ paragraph "The username or password you entered is incorrect. Try again. " }
+    }  
+  }
 }
 
 
 /* Initialization */
 def installed() { initialize() }
-def updated() { 
-	unsubscribe()
-	initialize() 
+def updated() {
+  unschedule()
+  unsubscribe()
+  initialize() 
   runEvery30Minutes(refresh)
 }
 def uninstalled() {
-	unschedule()
+  unschedule()
     unsubscribe()
-	getChildDevices().each { deleteChildDevice(it) }
-}	
+  getChildDevices().each { deleteChildDevice(it) }
+} 
 
 def initialize() {
-	// Set initial states
-	state.polling = [ last: 0, rescheduler: now() ]  
-	    
-	// Create selected devices
-	def waterHeaterList = getWaterHeaterList()
+      
+  // Create selected devices
+  def waterHeaterList = getWaterHeaterList()
     def selectedDevices = [] + getSelectedDevices("waterheater")
     selectedDevices.each {
-    	def dev = getChildDevice(it)
+      def dev = getChildDevice(it)
         def name  = waterHeaterList[it]
         if (dev == null) {
-	        try {
-    			addChildDevice("bmcgair", "Rheem Econet Tankless", it, null, ["name": "Rheem Tankless: " + name])
-    	    } catch (e)	{
-				log.debug "addChildDevice Error: $e"
-          	}
+          try {
+          addChildDevice("bmcgair", "Rheem Econet Tankless", it, null, ["name": "Rheem Tankless: " + name])
+          } catch (e) {
+        log.debug "addChildDevice Error: $e"
+            }
         }
     }
 }
 
 def getSelectedDevices( settingsName ) {
-	def selectedDevices = []
-	(!settings.get(settingsName))?:((settings.get(settingsName)?.getAt(0)?.size() > 1)  ? settings.get(settingsName)?.each { selectedDevices.add(it) } : selectedDevices.add(settings.get(settingsName)))
-	return selectedDevices
+  def selectedDevices = []
+  (!settings.get(settingsName))?:((settings.get(settingsName)?.getAt(0)?.size() > 1)  ? settings.get(settingsName)?.each { selectedDevices.add(it) } : selectedDevices.add(settings.get(settingsName)))
+  return selectedDevices
 }
 
 
 /* Data Management */
 // Listing all the water heaters you have in Rheem EcoNet
-private getWaterHeaterList() { 	 
-	def deviceList = [:]
-	apiGet("/locations", [] ) { response ->
-    	if (response.status == 200) {
-          	response.data.equipment[0].each { 
-            	if (it.type.equals("Water Heater")) {
-                	deviceList["" + it.id]= it.name
+private getWaterHeaterList() {   
+  def deviceList = [:]
+  apiGet("/locations", [] ) { response ->
+      if (response.status == 200) {
+            response.data.equipment[0].each { 
+              if (it.type.equals("Water Heater")) {
+                  deviceList["" + it.id]= it.name
                 }
             }
         }
@@ -127,62 +126,64 @@ private getWaterHeaterList() {
 
 // Refresh data
 def refresh() {
-	if (!login()) {
-    	return
+  if (!login()) {
+      return
     }
     
-	log.info "Refreshing data..."
+  log.info "Refreshing data..."
 
-	// get all the children and send updates
-	getChildDevices().each {
-    	def id = it.deviceNetworkId
-    	apiGet("/equipment/$id", [] ) { response ->
-    		if (response.status == 200) {
-            	log.debug "Got data: $response.data"
-            	it.updateDeviceData(response.data)
+  // get all the children and send updates
+  getChildDevices().each {
+      def id = it.deviceNetworkId
+      apiGet("/equipment/$id", [] ) { response ->
+        if (response.status == 200) {
+              log.debug "Got data: $response.data"
+              it.updateDeviceData(response.data)
             }
         }
 
     }
     
-	}
+  }
 
-def setDeviceSetPoint(childDevice, setpoint) { 
-	log.info "setDeviceSetPoint: $childDevice.deviceNetworkId $setpoint" 
-	if (login()) {
-    	apiPut("/equipment/$childDevice.deviceNetworkId", [
-        	body: [
-                setPoint: setpoint,
+def setHeatSetPoint(childDevice, heatsetpoint) {
+    login()
+  log.info "setDeviceSetPoint: $childDevice.deviceNetworkId $heatsetpoint" 
+  if (login()) {
+      apiPut("/equipment/$childDevice.deviceNetworkId", [
+          body: [
+                setPoint: Float.parseFloat(heatsetpoint),
+
             ]
         ])
     }
-
 }
+
 def setDeviceEnabled(childDevice, enabled) {
-	log.info "setDeviceEnabled: $childDevice.deviceNetworkId $enabled" 
-	if (login()) {
-    	apiPut("/equipment/$childDevice.deviceNetworkId", [
-        	body: [
+  log.info "setDeviceEnabled: $childDevice.deviceNetworkId $enabled" 
+  if (login()) {
+      apiPut("/equipment/$childDevice.deviceNetworkId", [
+          body: [
                 isEnabled: enabled,
             ]
         ])
     }
 }
 def setDeviceMode(childDevice, mode) {
-	log.info "setDeviceEnabled: $childDevice.deviceNetworkId $enabled" 
-	if (login()) {
-    	apiPut("/equipment/$childDevice.deviceNetworkId", [
-        	body: [
+  log.info "setDeviceEnabled: $childDevice.deviceNetworkId $enabled" 
+  if (login()) {
+      apiPut("/equipment/$childDevice.deviceNetworkId", [
+          body: [
                 mode: mode,
             ]
         ])
     }
 }
 def setDeviceOnVacation(childDevice, OnVacation) {
-	log.info "setDeviceOnVacation: $childDevice.deviceNetworkId $OnVacation" 
-	if (login()) {
-    	apiPut("/equipment/$childDevice.deviceNetworkId", [
-        	body: [
+  log.info "setDeviceOnVacation: $childDevice.deviceNetworkId $OnVacation" 
+  if (login()) {
+      apiPut("/equipment/$childDevice.deviceNetworkId", [
+          body: [
                 isOnVacation: OnVacation,
             ]
         ])
@@ -190,85 +191,85 @@ def setDeviceOnVacation(childDevice, OnVacation) {
 }
 
 private login() {
-	def apiParams = [
-    	uri: getApiURL(),
+  def apiParams = [
+      uri: getApiURL(),
         path: "/auth/token",
         headers: ["Authorization": "Basic Y29tLnJoZWVtLmVjb25ldF9hcGk6c3RhYmxla2VybmVs"],
         requestContentType: "application/x-www-form-urlencoded",
         body: [
-        	username: settings.username,
-        	password: settings.password,
-        	"grant_type": "password"
+          username: settings.username,
+          password: settings.password,
+          "grant_type": "password"
         ],
     ]
     if (state.session?.expiration < now()) {
-    	try {
-			httpPost(apiParams) { response -> 
-            	if (response.status == 200) {
-                	log.debug "Login good!"
-                	state.session = [ 
-                    	accessToken: response.data.access_token,
-                    	refreshToken: response.data.refresh_token,
-                    	expiration: now() + 150000
-                	]
-                	return true
-            	} else {
-                	return false
-            	} 	
-        	}
-		}	catch (e)	{
-			log.debug "API Error: $e"
-        	return false
-		}
-	} else { 
-    	// TODO: do a refresh 
-		return true
-	}
+      try {
+      httpPost(apiParams) { response -> 
+              if (response.status == 200) {
+                  log.debug "Login good!"
+                  state.session = [ 
+                      accessToken: response.data.access_token,
+                      refreshToken: response.data.refresh_token,
+                      expiration: now() + 150000
+                  ]
+                  return true
+              } else {
+                  return false
+              }   
+          }
+    } catch (e) {
+      log.debug "API Error: $e"
+          return false
+    }
+  } else { 
+      // TODO: do a refresh 
+    return true
+  }
 }
 
 /* API Management */
 // HTTP GET call
-private apiGet(apiPath, apiParams = [], callback = {}) {	
-	// set up parameters
-	apiParams = [ 
-		uri: getApiURL(),
-		path: apiPath,
+private apiGet(apiPath, apiParams = [], callback = {}) {  
+  // set up parameters
+  apiParams = [ 
+    uri: getApiURL(),
+    path: apiPath,
         headers: ["Authorization": getApiAuth()],
         requestContentType: "application/json",
-	] + apiParams
-	log.debug "GET: $apiParams"
-	try {
-		httpGet(apiParams) { response -> 
-        	callback(response)
+  ] + apiParams
+  log.debug "GET: $apiParams"
+  try {
+    httpGet(apiParams) { response -> 
+          callback(response)
         }
-	}	catch (e)	{
-		log.debug "API Error: $e"
-	}
+  } catch (e) {
+    log.debug "API Error: $e"
+  }
 }
 
 // HTTP PUT call
-private apiPut(apiPath, apiParams = [], callback = {}) {	
-	// set up parameters
-	apiParams = [ 
-		uri: getApiURL(),
-		path: apiPath,
+private apiPut(apiPath, apiParams = [], callback = {}) {  
+  // set up parameters
+  apiParams = [ 
+    uri: getApiURL(),
+    path: apiPath,
         headers: ["Authorization": getApiAuth()],
         requestContentType: "application/json",
-	] + apiParams
-	log.debug "apiPut: $apiParams"
-	try {
-		httpPut(apiParams) { response -> 
-        	callback(response)
+  ] + apiParams
+  log.debug "apiPut: $apiParams"
+  try {
+    httpPut(apiParams) { response -> 
+          callback(response)
         }
-	}	catch (e)	{
-		log.debug "API Error: $e"
-	}
+  } catch (e) {
+    log.debug "API Error: $e"
+  }
 }
 
 private getApiURL() { 
-	return "https://econet-api.rheemcert.com"
+  return "https://econet-api.rheemcert.com"
 }
     
 private getApiAuth() {
-	return "Bearer " + state.session?.accessToken
+  return "Bearer " + state.session?.accessToken
 }

@@ -1,8 +1,7 @@
 /**
  *  Rheem Econet Tankless Water Heater
  *
- * Contributors:
- *    https://github.com/copy-ninja/SmartThings_RheemEcoNet
+ *  Copyright 2017 Bill McGair
  *
  *  Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  *  in compliance with the License. You may obtain a copy of the License at:
@@ -18,21 +17,20 @@
  *  Based on https://github.com/copy-ninja/SmartThings_RheemEcoNet
  */
 metadata {
-	definition (name: "Rheem Econet Tankless", namespace: "bmcgair", author: "Bill McGair") {
-        capability "Thermostat"
-		capability "Actuator"
-		capability "Refresh"
-		capability "Sensor"
-		capability "Thermostat Heating Setpoint"
-        capability "Temperature Measurement"
-		
-		command "heatLevelUp"
-		command "heatLevelDown"
-    command "refresh"
-		command "updateDeviceData", ["string"]
-	}
+  definition (name: "Rheem Econet Tankless", namespace: "bmcgair", author: "Bill McGair") {
+    capability "Sensor"
+    capability "Thermostat Heating Setpoint"
+    capability "Thermostat Operating State"
+    capability "Thermostat Setpoint"
+    
+    command "heatLevelUp"
+    command "heatLevelDown"
+    command "setHeatingSetpoint"
+    command "heatLevelUp"
+    command "heatLevelDown"
+  }
 
-	simulator { }
+  simulator { }
 
     tiles(scale: 2)  {
         multiAttributeTile(name:"thermostat", type:"thermostat", width:6, height:4) {
@@ -44,44 +42,46 @@ metadata {
                 attributeState("VALUE_UP", action: "heatLevelUp")
                 attributeState("VALUE_DOWN", action: "heatLevelDown")
             }
-
+            
             tileAttribute("device.thermostatOperatingState", key: "OPERATING_STATE") {
                 attributeState("idle", label:'${name}', backgroundColor:"#1e9cbb")
                 attributeState("heating", label:'${name}', backgroundColor:"#bc2323")
             }
-        }
 
-	    main("thermostat")
-	}
+        }
+      main("thermostat")
+  }
 }
 
 def parse(String description) { }
 
 def refresh() {
-	log.debug "refresh"
-	parent.refresh()
+  log.debug "refresh"
+  parent.refresh()
 }
 
-def setHeatingSetpoint(Number setPoint) {
-   	sendEvent(name: "heatingSetpoint", value: setPoint, unit: "F")
-	parent.setDeviceSetPoint(this.device, setPoint)
+def setHeatingSetpoint(heatSetPoint.toString()) {
+    sendEvent(name: "heatingSetpoint", value: heatSetPoint, unit: "F")
+  parent.setHeatSetPoint(this.device, heatSetPoint.toString())
     refresh()
 }
 
 def heatLevelUp() { 
-	def setPoint = device.currentValue("heatingSetpoint")
-    setPoint = setPoint + 1
-	setHeatingSetpoint(setPoint)
-}	
+  def heatSetPoint = device.currentValue("heatingSetpoint")
+    heatSetPoint = heatSetPoint + 1
+  setHeatingSetpoint(heatSetPoint.toString())
+} 
 
 def heatLevelDown() { 
-	def setPoint = device.currentValue("heatingSetpoint")
-    setPoint = setPoint - 1
-    setHeatingSetpoint(setPoint)
+  def heatSetPoint = device.currentValue("heatingSetpoint")
+    heatSetPoint = heatSetPoint - 1
+    setHeatingSetpoint(heatSetPoint.toString())
 }
 
 def updateDeviceData(data) {
-    sendEvent(name: "heatingSetpoint", value: data.setPoint, unit: "F")
+    sendEvent(name: "heatingSetpoint", value: data.heatSetPoint, unit: "F")
     sendEvent(name: "thermostatOperatingState", value: data.inUse ? "heating" : "idle")
 
 }
+
+

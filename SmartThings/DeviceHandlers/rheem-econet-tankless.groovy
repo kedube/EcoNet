@@ -17,7 +17,7 @@
  *
  */
 metadata {
-	definition (name: "Rheem Econet Tankless", namespace: "bmcgair", author: "Bill McGair") {
+	definition (name: "Rheem Econet Tankless", namespace: "kedube", author: "Bill McGair") {
         capability "Thermostat"
 		capability "Actuator"
 		capability "Refresh"

@@ -21,7 +21,7 @@
 definition(
     name: "Rheem EcoNet Tankless",
     namespace: "kedube",
-    author: "Justin Huff",
+    author: "Bill McGair",
     description: "Connect to Rheem EcoNet",
     category: "SmartThings Labs",
     iconUrl: "https://raw.githubusercontent.com/kedube/EcoNet/master/SmartThings/Icons/econet.png",

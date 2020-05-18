@@ -17,7 +17,7 @@
  *
  */
 metadata {
-	definition (name: "Rheem Econet Thermostat", namespace: "bmcgair", author: "Bill McGair") {
+	definition (name: "Rheem Econet Thermostat", namespace: "kedube", author: "Justin Huff") {
 		capability "Actuator"
 		capability "Thermostat"
 		capability "Sensor"

@@ -21,8 +21,8 @@
  */
 definition(
     name: "Rheem EcoNet Thermostat",
-    namespace: "bmcgair",
-    author: "BMcGair",
+    namespace: "kedube",
+    author: "Justin Huff",
     description: "Connect to Rheem EcoNet Thermostat",
     category: "SmartThings Labs",
     iconUrl: "https://raw.githubusercontent.com/kedube/EcoNet/master/SmartThings/Icons/econet.png",

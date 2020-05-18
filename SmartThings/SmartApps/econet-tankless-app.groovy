@@ -20,8 +20,8 @@
  */
 definition(
     name: "Rheem EcoNet Tankless",
-    namespace: "bmcgair",
-    author: "BMcGair",
+    namespace: "kedube",
+    author: "Justin Huff",
     description: "Connect to Rheem EcoNet",
     category: "SmartThings Labs",
     iconUrl: "https://raw.githubusercontent.com/kedube/EcoNet/master/SmartThings/Icons/econet.png",
